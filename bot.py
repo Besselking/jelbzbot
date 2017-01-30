@@ -30,6 +30,15 @@ def help(bot, update):
     update.message.reply_text('Type "@jelbzbot <link>" to shorten your url')
 
 
+def showurl(bot, update, args):
+    url = args[0]
+    url = url.replace("https://jel.bz/", "")
+    r = requests.get("https://jel.bz/urls/{}".format(url))
+
+    text = "https://jel.bz/{} = {}".format(url, r.json()["message"])
+    update.message.reply_text(text)
+
+
 def escape_markdown(text):
     escape_chars = '\*_`\['
     return re.sub(r'([%s])' % escape_chars, r'\\\1', text)
@@ -100,6 +109,7 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("url", showurl, pass_args=True))
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(InlineQueryHandler(inlinequery))
